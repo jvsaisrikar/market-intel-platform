@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package ranker.v1;
+
+option go_package = "github.com/saisrikar/market-intel-platform/proto/gen/ranker/v1;rankerv1";
+
+// RankingService returns ranked stories for a ticker.
+service RankingService {
+  rpc GetTopStories (TopStoriesRequest) returns (TopStoriesResponse);
+}
+
+message TopStoriesRequest {
+  string ticker = 1;
+  int32 limit = 2;
+}
+
+message Story {
+  string id = 1;
+  string title = 2;
+  string source = 3;
+  string published_at = 4;
+  float sentiment = 5;
+}
+
+message TopStoriesResponse {
+  repeated Story stories = 1;
+}
