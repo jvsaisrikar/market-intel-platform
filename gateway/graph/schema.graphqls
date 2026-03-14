@@ -1,0 +1,11 @@
+type Story {
+  id: ID!
+  title: String!
+  source: String!
+  publishedAt: String!
+  sentiment: Float!
+}
+
+type Query {
+  topStories(ticker: String!, limit: Int): [Story!]!
+}

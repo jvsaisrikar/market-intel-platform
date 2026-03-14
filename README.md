@@ -1,19 +1,35 @@
 # market-intel-platform
 A distributed backend platform that ingests market news, enriches it with sentiment, and serves insights via GraphQL and gRPC.
 
-## Run and test locally
+## Running commands
 
-From the repository root:
+Run from repo root:
 
 ```bash
-# Start the Ranker gRPC service on :50052
+# 1) Install/update deps
+go mod tidy
+
+# 2) Build everything
+go build ./...
+```
+
+Terminal 1:
+
+```bash
+# 3) Start Ranker gRPC service (:50052)
 go run ./services/ranker/cmd/server
 ```
 
-In a second terminal:
+Terminal 2:
 
 ```bash
-# Call GetTopStories (expects 2 stories in response)
+# 4) Start GraphQL gateway (:8080)
+go run ./gateway/cmd/server
+```
+
+Terminal 3 (gRPC direct test):
+
+```bash
 grpcurl -plaintext \
   -import-path proto/ranker \
   -proto ranker.proto \
@@ -22,8 +38,10 @@ grpcurl -plaintext \
   ranker.v1.RankingService/GetTopStories
 ```
 
-Optional compile check:
+Terminal 3 (GraphQL -> gRPC end-to-end test):
 
 ```bash
-go build ./services/ranker/cmd/server
+curl -X POST http://localhost:8080/query \
+  -H "Content-Type: application/json" \
+  -d '{"query":"query { topStories(ticker: \"AAPL\", limit: 2) { title sentiment source } }"}'
 ```
